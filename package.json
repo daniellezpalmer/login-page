@@ -13,6 +13,7 @@
     "express": "^4.15.4",
     "express-mustache": "^1.0.3",
     "express-session": "^1.15.5",
-    "mustache": "^2.3.0"
+    "mustache": "^2.3.0",
+    "mustache-express": "^1.2.5"
   }
 }
