@@ -1,11 +1,12 @@
 const express = require('express');
-const mustache = require('mustache');
 const mustacheExpress = require('mustache-express');
 const bodyParser = require('body-parser');
 const session = require('express-session')
 const app = express();
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
 app.engine('mustache', mustacheExpress());
 app.set('views', './views');
@@ -16,22 +17,39 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }))
-1
-app.use(function (req, res, next) {
-  console.log('in interceptor');
-  next()
+
+const users = [{
+  username: 'somethin',
+  password: 'else'
+}]
+
+app.use(function(req, res, next) {
+  if (req.url === '/login') {
+    next()
+  } else if (!req.session.username) {
+    res.render('login')
+  } else {
+    next()
+  }
 })
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
   res.render('home')
 })
 
-app.post('/login', function (req, res) {
-  console.log('username is: ' + req.body.username);
-  console.log('password is: ' + req.body.password);
-  res.render('home')
+app.post('/login', function(req, res) {
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].username === req.body.username && users[i].password === req.body.password) {
+      req.session.username = req.body.username;
+      res.render('home')
+    } else {
+      res.render('login', {
+        error: true
+      })
+    }
+  }
 })
 
-app.listen(3000, function () {
+app.listen(3000, function() {
   console.log('Started');
 })
